@@ -11,13 +11,15 @@ import PinCreator from './ui/PinCreator';
 import PinEditor from './ui/PinEditor';
 import Generate from './ui/Generate';
 import Visualizer from './visualize/Visualizer';
+import ConfigBanner from './ui/ConfigBanner';
 
 export default function App() {
 	return (
 		<div className="App">
-			<header className="App-header">
-				Dovetail Generator
-			</header>
+                        <header className="App-header">
+                                <div>Dovetail Generator</div>
+                                <ConfigBanner />
+                        </header>
 			<div className="Body">
 				<div className="BodyLeft">
 					<GlobalSettings />

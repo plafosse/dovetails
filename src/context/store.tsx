@@ -18,12 +18,12 @@ import type {GuidesAction} from './guides';
 import type {HalfPinsAction} from './halfPins';
 import type {PinsAction} from './pins';
 
-const StoreSchema = z.object(
-	{
-		general: ContextGeneralSchema,
-		guides: ContextGuidesSchema,
-		halfPins: ContextHalfPinsSchema,
-		pins: ContextPinsSchema,
+export const StoreSchema = z.object(
+        {
+                general: ContextGeneralSchema,
+                guides: ContextGuidesSchema,
+                halfPins: ContextHalfPinsSchema,
+                pins: ContextPinsSchema,
 	},
 );
 export type Store = z.infer<typeof StoreSchema>;
@@ -35,7 +35,8 @@ const initStore = {
 	pins: initPins,
 };
 
-type Action = GeneralAction | GuidesAction | HalfPinsAction | PinsAction;
+type LoadAction = {store: 'all', type: 'load', state: Store};
+type Action = GeneralAction | GuidesAction | HalfPinsAction | PinsAction | LoadAction;
 
 type TContext = [Store, React.Dispatch<Action>]
 const Context = createContext<TContext>([initStore, () => {}]);
@@ -45,7 +46,11 @@ const VALIDATIONS = [
 ];
 
 export function useStore(): TContext {
-	return useContext(Context);
+        return useContext(Context);
+}
+
+export function loadStore(state: Store): LoadAction {
+        return {store: 'all', type: 'load', state};
 }
 
 type Props = {children: React.ReactNode | React.ReactNode[]};
@@ -68,12 +73,15 @@ export function StoreProvider({children}:  Props) {
 		(state: Store, action: Action) => {
 			let newState = state;
 
-			switch (action.store) {
-				case 'general':
-					newState = {
-						...state,
-						general: reduceGeneral(state.general, action),
-					};
+                        switch (action.store) {
+                                case 'all':
+                                        newState = action.state;
+                                        break;
+                                case 'general':
+                                        newState = {
+                                                ...state,
+                                                general: reduceGeneral(state.general, action),
+                                        };
 					break;
 				case 'guides':
 					newState = {
